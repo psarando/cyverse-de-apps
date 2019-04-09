@@ -10,7 +10,6 @@
                 SecuredQueryParamsEmailRequired]]
         [apps.routes.schemas.analysis]
         [apps.routes.schemas.analysis.listing]
-        [apps.routes.schemas.app]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])

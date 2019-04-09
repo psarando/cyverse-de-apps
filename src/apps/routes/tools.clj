@@ -1,6 +1,7 @@
 (ns apps.routes.tools
   (:use [common-swagger-api.schema]
         [common-swagger-api.schema.apps :only [AppListing]]
+        [common-swagger-api.schema.apps.admin :only [AdminAppListing]]
         [common-swagger-api.schema.containers
          :only [DataContainer
                 Device
@@ -17,7 +18,6 @@
         [apps.containers]
         [apps.routes.params]
         [apps.routes.schemas.containers]
-        [apps.routes.schemas.app :only [AdminAppListing]]
         [apps.routes.schemas.tool]
         [apps.tools
          :only [admin-add-tools

@@ -20,7 +20,7 @@
          :only [IntegrationDataIdPathParam
                 SecuredQueryParams]]
         [apps.routes.schemas.analysis.listing]
-        [apps.routes.schemas.app]
+        [apps.routes.schemas.app :only [AdminAppSearchParams]]
         [apps.routes.schemas.app.category]
         [apps.routes.schemas.reference-genome]
         [apps.routes.schemas.tool]
@@ -32,7 +32,8 @@
             [apps.service.apps.de.admin :as admin]
             [apps.service.apps.de.listings :as listings]
             [apps.service.workspace :as workspace]
-            [apps.util.config :as config]))
+            [apps.util.config :as config]
+            [common-swagger-api.schema.apps.admin :as schema]))
 
 (defroutes admin-tool-requests
   (GET "/" []
@@ -104,7 +105,7 @@
   (GET "/" []
     :query [params AdminAppSearchParams]
     :summary "List Apps"
-    :return AdminAppListing
+    :return schema/AdminAppListing
     :description
     (str
 "This service allows admins to list all public apps, including apps listed under the `Trash` category:
@@ -117,7 +118,7 @@
 (get-endpoint-delegate-block
   "metadata"
   "POST /ontologies/{ontology-version}/filter-targets"))
-    (ok (coerce! AdminAppListing
+    (ok (coerce! schema/AdminAppListing
                  (apps/admin-search-apps current-user params))))
 
   (POST "/" []
@@ -150,8 +151,8 @@
 
     (PATCH "/" []
       :query [params SecuredQueryParams]
-      :body [body (describe AdminAppPatchRequest "The App to update.")]
-      :return AdminAppDetails
+      :body [body (describe schema/AdminAppPatchRequest "The App to update.")]
+      :return schema/AdminAppDetails
       :summary "Update App Details and Labels"
       :description (str
 "This service is capable of updating high-level information of an App,
@@ -173,12 +174,12 @@
   "metadata"
   "POST /ontologies/{ontology-version}/filter")
 "Please see the metadata service documentation for information about the `hierarchies` response field.")
-      (ok (coerce! AdminAppDetails
+      (ok (coerce! schema/AdminAppDetails
                    (apps/admin-update-app current-user system-id (assoc body :id app-id)))))
 
     (GET "/details" []
       :query [params SecuredQueryParams]
-      :return AdminAppDetails
+      :return schema/AdminAppDetails
       :summary "Get App Details"
       :description (str
 "This service allows administrative users to view detailed informaiton about private apps."
@@ -186,7 +187,7 @@
   "metadata"
   "POST /ontologies/{ontology-version}/filter")
 "Please see the metadata service documentation for information about the `hierarchies` response field.")
-      (ok (coerce! AdminAppDetails
+      (ok (coerce! schema/AdminAppDetails
                    (apps/admin-get-app-details current-user system-id app-id))))
 
     (PATCH "/documentation" []
@@ -269,13 +270,13 @@
   (GET "/:community-id/apps" []
        :path-params [community-id :- AppCommunityGroupNameParam]
        :query [params AdminAppListingPagingParams]
-       :return AdminAppListing
+       :return schema/AdminAppListing
        :summary "List Apps in a Community"
        :description (str "Lists all of the apps under an App Community that are visible to an admin."
                          (get-endpoint-delegate-block
                            "metadata"
                            "POST /avus/filter-targets"))
-       (ok (coerce! AdminAppListing (apps/admin-list-apps-in-community current-user community-id params)))))
+       (ok (coerce! schema/AdminAppListing (apps/admin-list-apps-in-community current-user community-id params)))))
 
 (defroutes admin-ontologies
 
@@ -330,7 +331,7 @@
     :path-params [ontology-version :- OntologyVersionParam
                   root-iri :- OntologyClassIRIParam]
     :query [{:keys [attr] :as params} AdminOntologyAppListingPagingParams]
-    :return AdminAppListing
+    :return schema/AdminAppListing
     :summary "List Apps in a Category"
     :description (str
 "Lists all of the apps under an app category hierarchy, for the given `ontology-version`,
@@ -338,14 +339,14 @@
 (get-endpoint-delegate-block
   "metadata"
   "POST /ontologies/{ontology-version}/{root-iri}/filter-targets"))
-    (ok (coerce! AdminAppListing
+    (ok (coerce! schema/AdminAppListing
                  (apps/admin-list-apps-under-hierarchy current-user ontology-version root-iri attr params))))
 
   (GET "/:ontology-version/:root-iri/unclassified" [root-iri]
     :path-params [ontology-version :- OntologyVersionParam
                   root-iri :- OntologyClassIRIParam]
     :query [{:keys [attr] :as params} AdminOntologyAppListingPagingParams]
-    :return AdminAppListing
+    :return schema/AdminAppListing
     :summary "List Unclassified Apps"
     :description (str
 "Lists all of the apps that are visible to the user that are not under the given `root-iri`, or any of
@@ -353,7 +354,7 @@
 (get-endpoint-delegate-block
   "metadata"
   "POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"))
-    (ok (coerce! AdminAppListing
+    (ok (coerce! schema/AdminAppListing
                  (listings/get-unclassified-app-listing current-user ontology-version root-iri attr params true)))))
 
 (defroutes reference-genomes
