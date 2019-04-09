@@ -33,6 +33,7 @@
             [apps.service.apps.de.listings :as listings]
             [apps.service.workspace :as workspace]
             [apps.util.config :as config]
+            [common-swagger-api.schema.apps :as apps-schema]
             [common-swagger-api.schema.apps.admin :as schema]))
 
 (defroutes admin-tool-requests
@@ -103,23 +104,12 @@
 
 (defroutes admin-apps
   (GET "/" []
-    :query [params AdminAppSearchParams]
-    :summary "List Apps"
-    :return schema/AdminAppListing
-    :description
-    (str
-"This service allows admins to list all public apps, including apps listed under the `Trash` category:
- deleted public apps and private apps that are 'orphaned' (not categorized in any user's workspace).
- If the `search` parameter is included, then the results are filtered by the App name, description,
- integrator's name, tool name, or category name the app is under."
-(get-endpoint-delegate-block
-  "metadata"
-  "POST /avus/filter-targets")
-(get-endpoint-delegate-block
-  "metadata"
-  "POST /ontologies/{ontology-version}/filter-targets"))
-    (ok (coerce! schema/AdminAppListing
-                 (apps/admin-search-apps current-user params))))
+       :query [params AdminAppSearchParams]
+       :summary apps-schema/AppListingSummary
+       :return schema/AdminAppListing
+       :description-file "docs/apps/admin/apps-listing.md"
+       (ok (coerce! schema/AdminAppListing
+                    (apps/admin-search-apps current-user params))))
 
   (POST "/" []
     :query [params SecuredQueryParams]
