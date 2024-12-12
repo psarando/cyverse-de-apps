@@ -40,7 +40,7 @@
                  :sharer   sharer
                  :sharee   sharee
                  :items    response-desc
-                 :count    response-count})))
+                 :count    (str response-count)})))
 
 (defn format-subject
   [formats singular plural action sharer sharee response-desc response-count]

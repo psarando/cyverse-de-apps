@@ -21,7 +21,7 @@
    (tool-sharing-msg reason-code tool-id nil))
   ([reason-code tool-id detail]
    (render (tool-sharing-formats reason-code)
-           {:tool-id tool-id
+           {:tool-id (str tool-id)
             :detail  (or detail "unexpected error")})))
 
 (defn- tool-sharing-success
