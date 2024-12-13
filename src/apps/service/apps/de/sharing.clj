@@ -20,7 +20,7 @@
    (app-sharing-msg reason-code app-id nil))
   ([reason-code app-id detail]
    (render (app-sharing-formats reason-code)
-           {:app-id app-id
+           {:app-id (str app-id)
             :detail (or detail "unexpected error")})))
 
 (defn- share-tool-for-app
