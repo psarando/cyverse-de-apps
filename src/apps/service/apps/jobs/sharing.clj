@@ -77,7 +77,7 @@
    (job-sharing-msg reason-code job-id nil))
   ([reason-code job-id detail]
    (render (job-sharing-formats reason-code)
-           {:analysis-id job-id
+           {:analysis-id (str job-id)
             :detail (or detail default-failure-reason)})))
 
 (defn- job-sharing-error
